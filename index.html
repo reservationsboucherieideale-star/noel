@@ -57,6 +57,8 @@ section > p.sous{margin:6px 0 16px;color:var(--doux)}
 .question > .titre{display:block;font-weight:700;font-size:15px;margin-bottom:8px}
 .choix{display:grid;gap:10px}
 .choix.deux{grid-template-columns:1fr 1fr}
+.choix.trois{grid-template-columns:1fr 1fr 1fr}
+@media (max-width:420px){.choix.trois{grid-template-columns:1fr}}
 .choix label{position:relative;display:flex;align-items:center;gap:12px;background:var(--carte);border:1.5px solid var(--trait);border-radius:12px;padding:15px 16px;cursor:pointer;font-weight:500;min-height:54px}
 .choix input{position:absolute;opacity:0;pointer-events:none}
 .choix .rond{flex:none;width:20px;height:20px;border-radius:50%;border:2px solid var(--trait);display:grid;place-items:center}
@@ -136,7 +138,7 @@ body.etape-merci #merci-vue{display:block}
   </section>
 
   <section id="s-repas" class="cache" aria-labelledby="t-repas">
-    <h2 id="t-repas">Votre repas</h2>
+    <h2 id="t-repas">Votre repas et vos boissons</h2>
     <p class="sous">Le repas est servi au Club de golf de Saint-Georges.</p>
     <fieldset class="question" id="q-plat" style="border:0;padding:0;margin-inline:0">
       <legend class="titre">Plat principal</legend>
@@ -152,6 +154,23 @@ body.etape-merci #merci-vue{display:block}
       <div class="choix deux">
         <label><input type="radio" name="dessert" value="Gâteau à l'érable"><span class="rond" aria-hidden="true"></span>Gâteau à l’érable</label>
         <label><input type="radio" name="dessert" value="Gâteau au chocolat"><span class="rond" aria-hidden="true"></span>Gâteau au chocolat</label>
+      </div>
+      <div class="erreur" aria-live="polite"></div>
+    </fieldset>
+    <fieldset class="question" id="q-cocktail" style="border:0;padding:0;margin-inline:0">
+      <legend class="titre">Cocktail de bienvenue</legend>
+      <div class="choix deux">
+        <label><input type="radio" name="cocktail" value="Avec alcool"><span class="rond" aria-hidden="true"></span>Avec alcool</label>
+        <label><input type="radio" name="cocktail" value="Sans alcool"><span class="rond" aria-hidden="true"></span>Sans alcool</label>
+      </div>
+      <div class="erreur" aria-live="polite"></div>
+    </fieldset>
+    <fieldset class="question" id="q-vin" style="border:0;padding:0;margin-inline:0">
+      <legend class="titre">Vin au repas</legend>
+      <div class="choix trois">
+        <label><input type="radio" name="vin" value="Vin blanc"><span class="rond" aria-hidden="true"></span>Vin blanc</label>
+        <label><input type="radio" name="vin" value="Vin rouge"><span class="rond" aria-hidden="true"></span>Vin rouge</label>
+        <label><input type="radio" name="vin" value="Pas de vin"><span class="rond" aria-hidden="true"></span>Pas de vin</label>
       </div>
       <div class="erreur" aria-live="polite"></div>
     </fieldset>
@@ -190,6 +209,23 @@ body.etape-merci #merci-vue{display:block}
       </div>
       <div class="erreur" aria-live="polite"></div>
     </fieldset>
+    <fieldset class="question" id="q-cocktailacc" style="border:0;padding:0;margin-inline:0">
+      <legend class="titre">Son cocktail de bienvenue</legend>
+      <div class="choix deux">
+        <label><input type="radio" name="cocktailacc" value="Avec alcool"><span class="rond" aria-hidden="true"></span>Avec alcool</label>
+        <label><input type="radio" name="cocktailacc" value="Sans alcool"><span class="rond" aria-hidden="true"></span>Sans alcool</label>
+      </div>
+      <div class="erreur" aria-live="polite"></div>
+    </fieldset>
+    <fieldset class="question" id="q-vinacc" style="border:0;padding:0;margin-inline:0">
+      <legend class="titre">Son vin au repas</legend>
+      <div class="choix trois">
+        <label><input type="radio" name="vinacc" value="Vin blanc"><span class="rond" aria-hidden="true"></span>Vin blanc</label>
+        <label><input type="radio" name="vinacc" value="Vin rouge"><span class="rond" aria-hidden="true"></span>Vin rouge</label>
+        <label><input type="radio" name="vinacc" value="Pas de vin"><span class="rond" aria-hidden="true"></span>Pas de vin</label>
+      </div>
+      <div class="erreur" aria-live="polite"></div>
+    </fieldset>
   </section>
 
   <section id="s-allergies" class="cache" aria-labelledby="t-all">
@@ -218,7 +254,7 @@ body.etape-merci #merci-vue{display:block}
 <script>
 (function(){
   var FORM = 'https://docs.google.com/forms/d/e/1FAIpQLSfsBcraXHykrWf7Y_bfbajbMdqKsmIH6a3ewGQ8gwPwu9oc4Q/formResponse';
-  var E = {nom:'entry.391796711', present:'entry.239446938', accomp:'entry.104352473', plat:'entry.1725148463', dessert:'entry.2071923501', nomacc:'entry.1080192893', platacc:'entry.865519533', dessertacc:'entry.2145394547', allergies:'entry.958241479'};
+  var E = {nom:'entry.391796711', present:'entry.239446938', accomp:'entry.104352473', plat:'entry.1725148463', dessert:'entry.2071923501', nomacc:'entry.1080192893', platacc:'entry.865519533', dessertacc:'entry.2145394547', allergies:'entry.958241479', cocktail:'entry.1144912319', vin:'entry.1659953132', cocktailacc:'entry.782772356', vinacc:'entry.1185802840'};
   function $(id){return document.getElementById(id)}
   function radio(n){var r=document.querySelector('input[name="'+n+'"]:checked');return r?r.value:''}
   function joli(v){return v.replace(/'/g,'’')}
@@ -239,18 +275,22 @@ body.etape-merci #merci-vue{display:block}
   document.addEventListener('input',function(e){var c=e.target.closest('.champ');if(c&&c.classList.contains('invalide')){c.classList.remove('invalide');c.querySelector('.erreur').textContent='';}});
   function err(id,msg){var q=$(id);q.classList.add('invalide');q.querySelector('.erreur').textContent=msg;return q}
   $('envoyer').addEventListener('click',function(){
-    var d={nom:$('nom').value.trim(),present:radio('present'),accomp:radio('accomp'),plat:radio('plat'),dessert:radio('dessert'),nomacc:$('nomacc').value.trim(),platacc:radio('platacc'),dessertacc:radio('dessertacc'),allergies:$('allergies').value.trim()};
+    var d={nom:$('nom').value.trim(),present:radio('present'),accomp:radio('accomp'),plat:radio('plat'),dessert:radio('dessert'),nomacc:$('nomacc').value.trim(),platacc:radio('platacc'),dessertacc:radio('dessertacc'),allergies:$('allergies').value.trim(),cocktail:radio('cocktail'),vin:radio('vin'),cocktailacc:radio('cocktailacc'),vinacc:radio('vinacc')};
     var bad=[];
     if(!d.nom) bad.push(err('q-nom','Indiquez votre prénom et votre nom.'));
     if(!d.present) bad.push(err('q-present','Indiquez si vous serez présent.'));
     if(d.present==='Oui'){
       if(!d.plat) bad.push(err('q-plat','Choisissez votre plat principal.'));
       if(!d.dessert) bad.push(err('q-dessert','Choisissez votre dessert.'));
+      if(!d.cocktail) bad.push(err('q-cocktail','Choisissez votre cocktail de bienvenue.'));
+      if(!d.vin) bad.push(err('q-vin','Indiquez votre choix de vin.'));
       if(!d.accomp) bad.push(err('q-accomp','Indiquez si vous serez accompagné.'));
       if(d.accomp==='Oui'){
         if(!d.nomacc) bad.push(err('q-nomacc','Indiquez le nom de votre accompagnateur.'));
         if(!d.platacc) bad.push(err('q-platacc','Choisissez son plat principal.'));
         if(!d.dessertacc) bad.push(err('q-dessertacc','Choisissez son dessert.'));
+        if(!d.cocktailacc) bad.push(err('q-cocktailacc','Choisissez son cocktail de bienvenue.'));
+        if(!d.vinacc) bad.push(err('q-vinacc','Indiquez son choix de vin.'));
       }
     }
     if(bad.length){bad[0].scrollIntoView({behavior:'smooth',block:'center'});return;}
@@ -258,8 +298,8 @@ body.etape-merci #merci-vue{display:block}
     f.append(E.nom,d.nom); f.append(E.present,d.present);
     if(d.present==='Oui'){
       hist='0,1';
-      f.append(E.accomp,d.accomp); f.append(E.plat,d.plat); f.append(E.dessert,d.dessert);
-      if(d.accomp==='Oui'){hist+=',2'; f.append(E.nomacc,d.nomacc); f.append(E.platacc,d.platacc); f.append(E.dessertacc,d.dessertacc);}
+      f.append(E.accomp,d.accomp); f.append(E.plat,d.plat); f.append(E.dessert,d.dessert); f.append(E.cocktail,d.cocktail); f.append(E.vin,d.vin);
+      if(d.accomp==='Oui'){hist+=',2'; f.append(E.nomacc,d.nomacc); f.append(E.platacc,d.platacc); f.append(E.dessertacc,d.dessertacc); f.append(E.cocktailacc,d.cocktailacc); f.append(E.vinacc,d.vinacc);}
       hist+=',3'; if(d.allergies) f.append(E.allergies,d.allergies);
     }
     f.append('pageHistory',hist);
@@ -267,8 +307,8 @@ body.etape-merci #merci-vue{display:block}
     fetch(FORM,{method:'POST',mode:'no-cors',body:f}).then(function(){
       var rows=[['Nom',d.nom],['Présence',d.present==='Oui'?'Présent':'Absent']];
       if(d.present==='Oui'){
-        rows.push(['Votre repas',joli(d.plat)],['Votre dessert',joli(d.dessert)]);
-        if(d.accomp==='Oui'){rows.push(['Accompagnateur',d.nomacc],['Son repas',joli(d.platacc)],['Son dessert',joli(d.dessertacc)]);}
+        rows.push(['Votre repas',joli(d.plat)],['Votre dessert',joli(d.dessert)],['Votre cocktail',d.cocktail],['Votre vin',d.vin]);
+        if(d.accomp==='Oui'){rows.push(['Accompagnateur',d.nomacc],['Son repas',joli(d.platacc)],['Son dessert',joli(d.dessertacc)],['Son cocktail',d.cocktailacc],['Son vin',d.vinacc]);}
         if(d.allergies) rows.push(['Allergies',d.allergies]);
       }
       var box=$('merci-details'); box.textContent='';
